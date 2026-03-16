@@ -1,4 +1,4 @@
-import { intro, outro, spinner, text, note, isCancel, cancel } from "@clack/prompts";
+import { intro, outro, spinner, note } from "@clack/prompts";
 import boxen from "boxen";
 import chalk from "chalk";
 import gradient from "gradient-string";
@@ -55,27 +55,15 @@ export function showKeepAliveHint() {
   note(chalk.dim("Press Ctrl+C to stop sharing"), "Sharing active");
 }
 
-export async function promptLoginCode() {
-  const value = await text({
-    message: "Enter your QUICK login code",
-    placeholder: "XXXX-XXXX",
-  });
-
-  if (isCancel(value)) {
-    cancel("Login cancelled.");
-    return null;
-  }
-
-  return String(value ?? "").trim();
-}
-
-export function proBadge() {
-  const label = chalk.hex("#a855f7").bold("PRO ACCOUNT ACTIVE");
-  return boxen(label, {
-    padding: { top: 0, bottom: 0, left: 1, right: 1 },
-    borderStyle: "round",
-    borderColor: "magenta",
-  });
+export function showCommandsOverview() {
+  const heading = chalk.hex("#a855f7").bold("QUICK COMMANDS");
+  const lines = [
+    heading,
+    "",
+    `${chalk.bold("quick up --port <port>")}  Share a local dev server`,
+    `${chalk.bold("quick --help")}           Show detailed help`,
+  ];
+  console.log("\n" + lines.join("\n") + "\n");
 }
 
 function logo() {

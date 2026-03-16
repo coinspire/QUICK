@@ -10,11 +10,9 @@ import {
   showUrlBox,
   showErrorBox,
   showKeepAliveHint,
-  promptLoginCode,
-  proBadge,
+  showCommandsOverview,
 } from "../src/ui.js";
 import { createTunnel, isPortActive } from "../src/tunnel.js";
-import { readConfig, writeConfig } from "../src/config.js";
 
 const program = new Command();
 
@@ -26,7 +24,6 @@ program
     `
 Examples:
   quick up --port 3000
-  quick login
 `
   );
 
@@ -48,13 +45,6 @@ Examples:
   )
   .action(async (opts) => {
     showIntro();
-
-    const cfg = await readConfig();
-    if (cfg?.pro === true) {
-      // Keep this non-blocking and stylish.
-      // Printed after intro so it sits under the logo.
-      console.log(proBadge());
-    }
 
     const s = startConnectingSpinner();
 
@@ -98,39 +88,14 @@ Examples:
       process.exitCode = 1;
     }
   });
-
-program
-  .command("login")
-  .description("Activate a QUICK Pro account (mock).")
-  .addHelpText(
-    "after",
-    `
-Description:
-  Enter the mock code to enable a Pro badge in QUICK.
-
-Example:
-  quick login
-`
-  )
-  .action(async () => {
-    showIntro();
-
-    const code = await promptLoginCode();
-    if (code == null) return;
-
-    if (code === "PERCIVAL-2026") {
-      await writeConfig({ ...(await readConfig()), pro: true });
-      console.log(proBadge());
-      showOutro("You're in.");
-      return;
-    }
-
-    await writeConfig({ ...(await readConfig()), pro: false });
-    console.error(showErrorBox("Invalid code."));
-    process.exitCode = 1;
-  });
-
-await program.parseAsync(process.argv);
+// If no subcommand is provided, show the QUICK home screen with commands list.
+if (process.argv.length <= 2) {
+  showIntro();
+  showCommandsOverview();
+  process.exit(0);
+} else {
+  await program.parseAsync(process.argv);
+}
 
 function parsePort(value) {
   const n = Number.parseInt(String(value), 10);
