@@ -62,6 +62,7 @@ export function showCommandsOverview() {
     "",
     `${chalk.bold("quick up --port <port>")}  Share a local dev server`,
     `${chalk.bold("quick --help")}           Show detailed help`,
+    `${chalk.bold("exit")}                   Quit QUICK shell (when inside)`,
   ];
   console.log("\n" + lines.join("\n") + "\n");
 }
